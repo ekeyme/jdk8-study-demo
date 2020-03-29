@@ -336,6 +336,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      */
     static final int hash(Object key) {
         int h;
+        // 整形32位，高16位和低16位异或，使散列更均匀
         return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
     }
 
@@ -626,15 +627,16 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                    boolean evict) {
         Node<K,V>[] tab; Node<K,V> p; int n, i;
         if ((tab = table) == null || (n = tab.length) == 0)
-            n = (tab = resize()).length;
-        if ((p = tab[i = (n - 1) & hash]) == null)
+            n = (tab = resize()).length;  // 空hash表，初始化
+        // 总体实现就是hash + 链表结构，Node.next会记录hash碰撞的node
+        if ((p = tab[i = (n - 1) & hash]) == null)  // 新值，直接插入
             tab[i] = newNode(hash, key, value, null);
-        else {
+        else { // 有碰撞
             Node<K,V> e; K k;
             if (p.hash == hash &&
-                ((k = p.key) == key || (key != null && key.equals(k))))
+                ((k = p.key) == key || (key != null && key.equals(k))))  // key值一样，替换掉该node
                 e = p;
-            else if (p instanceof TreeNode)
+            else if (p instanceof TreeNode)  // 不知道是啥
                 e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
             else {
                 for (int binCount = 0; ; ++binCount) {
