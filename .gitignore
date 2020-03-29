@@ -23,6 +23,6 @@
 hs_err_pid*
 
 .DS_Store
-.idea/
 jdk-src-demo.iml
-out/
+/.idea/
+/out/
